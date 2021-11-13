@@ -17,8 +17,7 @@ d3.json("https://genius.p.rapidapi.com/artists/1177/songs?sort=popularity", {
 
 
 function getAlbums(data){
-
-	data.forEach(result => {
+	data.forEach( function(result, index, array) {
 		//get albums from api with url
 		d3.json("https://genius.p.rapidapi.com/" + result.api_path, {
 			"method": "GET",
@@ -27,33 +26,25 @@ function getAlbums(data){
 				"x-rapidapi-key": "0825494c1bmsh1828917831cd0c7p18e3e7jsn3a9c6a86182c"
 			}
 		}).then((json) => {
-		
+      newData.push({
+        "name": json.response.song.title,
+        "album": json.response.song.album.name
+      })  
 
-		//   songData = json.response;
-        // console.log(json.response.song.values
+          // newData.push(json.response.song.title);
+          if(result === array.at(-1)){
+            circlePack(newData);
+          }
+		})
 
-          songData.push(json.response.song.title);
-        //   const obj = Object.fromEntries("name" + songData);
-        // const obj = Object.fromEntries(songData);
+	})  
 
-
-        const obj = Object.fromEntries(
-            Object.entries(songData)
-            .map(([ key, val ]) => [ "Name", val])
-          );
-          newData.push(obj);
-		});
-	})
-    // console.log(songData);
-    circlePack(newData);
-    console.log(newData)
 }
 
-getData();
 
-
-function circlePack(newData)
+function circlePack(songData)
 {
+  console.log(songData)
 // set the dimensions and margins of the graph
 var width = 450
 var height = 450
@@ -64,15 +55,10 @@ var svg = d3.select("#my_dataviz")
     .attr("width", 450)
     .attr("height", 450)
 
-// create dummy data -> just one element per circle
-let newdata = [{ "name": "A" }, { "name": "B" }, { "name": "C" }]
-console.log(newData)
-// console.log(songData)
-
 // Initialize the circle: all located at the center of the svg area
 var node = svg.append("g")
   .selectAll("circle")
-  .data(newData)
+  .data(songData)
   .enter()
   .append("circle")
     .attr("r", 25)
@@ -82,7 +68,8 @@ var node = svg.append("g")
     .style("fill-opacity", 0.3)
     .attr("stroke", "#69a2b2")
     .style("stroke-width", 4)
-
+ 
+ 
 // Features of the forces applied to the nodes:
 var simulation = d3.forceSimulation()
     .force("center", d3.forceCenter().x(width / 2).y(height / 2)) // Attraction to the center of the svg area
@@ -92,10 +79,12 @@ var simulation = d3.forceSimulation()
 // Apply these forces to the nodes and update their positions.
 // Once the force algorithm is happy with positions ('alpha' value is low enough), simulations will stop.
 simulation
-    .nodes(newData)
+    .nodes(songData)
     .on("tick", function(d){
       node
           .attr("cx", function(d){ return d.x; })
           .attr("cy", function(d){ return d.y; })
     });
 }
+
+getData();
