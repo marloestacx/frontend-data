@@ -2,6 +2,7 @@ let data;
 let songData = [];
 let newData = [];
 
+//get 20 populair songs from artist
 function getData(){
 d3.json("https://genius.p.rapidapi.com/artists/1177/songs?sort=popularity", {
 	"method": "GET",
@@ -15,7 +16,7 @@ d3.json("https://genius.p.rapidapi.com/artists/1177/songs?sort=popularity", {
 	getAlbums(data);
 })};
 
-
+//get all song data
 function getAlbums(data){
 	data.forEach( function(result, index, array) {
 		//get albums from api with url
@@ -26,9 +27,12 @@ function getAlbums(data){
 				"x-rapidapi-key": "0825494c1bmsh1828917831cd0c7p18e3e7jsn3a9c6a86182c"
 			}
 		}).then((json) => {
+      //add name, album and views in array
+      console.log(json.response.song.stats.pageviews)
       newData.push({
         "name": json.response.song.title,
-        "album": json.response.song.album.name
+        "album": json.response.song.album.name,
+        "views": json.response.song.stats.pageviews
       })  
 
           // newData.push(json.response.song.title);
