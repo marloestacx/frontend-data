@@ -1,7 +1,30 @@
 let data;
 let songData = [];
-// let newData = [];
 let count = 0;
+
+// set the dimensions and margins of the graph
+// var width = 800
+// var height = 800
+
+const margin = {top: 40, bottom: 10, left: 120, right: 20};
+const width = 800 - margin.left - margin.right;
+const height = 600 - margin.top - margin.bottom;
+
+// Define the div for the tooltip
+var div = d3.select("body").append("div")	
+.attr("class", "tooltip")				
+.style("opacity", 0);
+
+// append the svg object to the body of the page
+// var svg = d3.select("#my_dataviz")
+//   .append("svg")
+//     .attr("width", 800)
+//     .attr("height", 800)
+
+
+const svg = d3.select('body').append('svg')
+.attr('width', width+margin.left+margin.right)
+.attr('height', height+margin.top+margin.bottom);
 
 //&per_page=50
 //get 20 populair songs from artist
@@ -40,7 +63,7 @@ function getAlbums(data){
       })  
 
           if(count == array.length - 1){
-            update(songData);
+            circlePack(songData);
           }
           count++
 		})
@@ -48,37 +71,16 @@ function getAlbums(data){
 
 }
 
-function update(songData)
+function circlePack(songData)
 {
-// set the dimensions and margins of the graph
-var width = 800
-var height = 800
-
-// Define the div for the tooltip
-var div = d3.select("body").append("div")	
-.attr("class", "tooltip")				
-.style("opacity", 0);
-
-// append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
-  .append("svg")
-    .attr("width", 800)
-    .attr("height", 800)
 
     console.log(songData);
 
-    // UPDATE
-    // update existing elements
-    (update) => update,
-    // EXIT
-    // elements that aren't associated with data
-    (exit) => exit.remove();
+const circle = svg.selectAll('circle').data(songData);
+
 // Initialize the circle: all located at the center of the svg area
-var node = svg.append("g")
-  .selectAll("circle")
-  .data(songData)
-  .enter()
-  .append("circle")
+var node = circle.enter()
+.append("circle")
     .attr("r", 25)
     .attr("cx", width / 2)
     .attr("cy", height / 2)
@@ -88,21 +90,24 @@ var node = svg.append("g")
         return "grey";
       } 
       if (songData.album == "evermore") {
-        return "brown";
+        return "green";
       } 
       else if (songData.album == "reputation") {
         return "black";
       }
-      else if (songData.album == "1989 (Deluxe)") {
+      else if (songData.album.includes("1989")) {
         return "blue";
       }
       else if (songData.album.includes("Red")) {
         return "#FF0000";
       }
-      else if (songData.album == "Lover (Target Exclusive)") {
+      else if (songData.album.includes("Lover")) {
         return "pink";
       }
-      return "yellow";
+      else if (songData.album.includes("Fearless")) {
+        return "yellow";
+      }
+      return "white";
     })
     // .style("fill", "#69b3a2")
     .style("fill-opacity", 0.8)
@@ -130,6 +135,9 @@ var node = svg.append("g")
             .duration(500)		
             .style("opacity", 0);	
   });
+
+  circle.update;
+circle.exit().remove();//remove unneeded circles
  
  
 // Features of the forces applied to the nodes:
@@ -158,10 +166,10 @@ d3.select('#filter-us-only').on('change', function() {
     // Keep only data element whose country is US
     // console.log(songData)
     const filtered_data = songData.filter((d) => d.artist === 'Taylor Swift');
-    update(filtered_data);  // Update the chart with the filtered data
+    circlePack(filtered_data);  // Update the chart with the filtered data
   } else {
     // Checkbox was just unchecked
-    update(songData);  // Update the chart with all the data we have
+    circlePack(songData);  // Update the chart with all the data we have
   }
 });  
 
