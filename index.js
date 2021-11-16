@@ -7,8 +7,8 @@ let count = 0;
 // var height = 800
 
 const margin = {top: 40, bottom: 10, left: 120, right: 20};
-const width = 800 - margin.left - margin.right;
-const height = 600 - margin.top - margin.bottom;
+const width = 1600 - margin.left - margin.right;
+const height = 800 - margin.top - margin.bottom;
 
 // Define the div for the tooltip
 var div = d3.select("body").append("div")	
@@ -73,15 +73,24 @@ function getAlbums(data){
 
 function circlePack(songData)
 {
+// const linearScale = d3.scaleSqrt()
+// .domain(d3.extent(songData, d => d.views))
+// .range([0, 100])
 
-    console.log(songData);
-
+// // Add a scale for bubble size
+// const sqrtScale = d3.scaleSqrt()
+// 	.domain(d3.extent(songData, d => d.views))
+// 	.range([0, 80]);
+console.log(songData)
 const circle = svg.selectAll('circle').data(songData);
 
 // Initialize the circle: all located at the center of the svg area
 var node = circle.enter()
 .append("circle")
-    .attr("r", 25)
+    // .attr("r", 25)
+    // .attr("cx", width / 2)
+    // .attr("cy", height / 2)
+    .attr("r", function(d){ return linearScale(d.views)})
     .attr("cx", width / 2)
     .attr("cy", height / 2)
     //color circle according to album name
@@ -136,7 +145,7 @@ var node = circle.enter()
             .style("opacity", 0);	
   });
 
-  circle.update;
+circle.update;
 circle.exit().remove();//remove unneeded circles
  
  
@@ -144,7 +153,8 @@ circle.exit().remove();//remove unneeded circles
 var simulation = d3.forceSimulation()
     .force("center", d3.forceCenter().x(width / 2).y(height / 2)) // Attraction to the center of the svg area
     .force("charge", d3.forceManyBody().strength(0.5)) // Nodes are attracted one each other of value is > 0
-    .force("collide", d3.forceCollide().strength(.01).radius(30).iterations(3)) // Force that avoids circle overlapping
+    .force("collide", d3.forceCollide().strength(.2).radius(function(d){ return (linearScale(d.views)+3) }).iterations(1)) // Force that avoids circle overlapping
+  
 
 // Apply these forces to the nodes and update their positions.
 // Once the force algorithm is happy with positions ('alpha' value is low enough), simulations will stop.
