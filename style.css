@@ -6,11 +6,11 @@
 div.tooltip {	
     position: absolute;			
     text-align: center;			
-    width: 60px;									
-    padding: 2px;				
+    width: 90px;												
     font: 12px sans-serif;		
-    background: lightsteelblue;	
+    background: lightseagreen;	
     border: 0px;		
-    border-radius: 8px;			
+    border-radius: 8px;	
+    padding: 2px;		
     pointer-events: none;	
 }
