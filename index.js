@@ -3,7 +3,7 @@ let songData = [];
 let count = 0;
 
 // set the dimensions and margins of the graph
-const margin = {top: 40, bottom: 10, left: 0, right: 20};
+const margin = {top: 0, bottom: 10, left: 0, right: 800};
 const width = 1600 - margin.left - margin.right;
 const height = 800 - margin.top - margin.bottom;
 
@@ -11,6 +11,17 @@ const height = 800 - margin.top - margin.bottom;
 var div = d3.select("body").append("div")	
 .attr("class", "tooltip")				
 .style("opacity", 0);
+
+// Creates sources <svg> element
+const svg = d3.select('#my_dataviz').append('svg')
+.attr('width', width+margin.left+margin.right)
+.attr('height', height+margin.top+margin.bottom);
+
+
+// Group used to enforce margin
+const g = svg.append('g')
+.attr('transform', `translate(${margin.left},${margin.top})`);
+
 
 //get 50 populair songs from artist
 function getData(){
@@ -54,17 +65,6 @@ function getAlbums(data){
 	})  
 
 }
-
-// Creates sources <svg> element
-const svg = d3.select('#my_dataviz').append('svg')
-.attr('width', width+margin.left+margin.right)
-.attr('height', height+margin.top+margin.bottom);
-
-
-// Group used to enforce margin
-const g = svg.append('g')
-.attr('transform', `translate(${margin.left},${margin.top})`);
-
 
 function circlePack(songData)
 {
@@ -136,7 +136,7 @@ var node = circle.enter()
 
 circle.update;
 circle.exit().remove();//remove unneeded circles
-
+legend(songData);
 console.log(node)
  
 // Features of the forces applied to the nodes:
@@ -156,6 +156,26 @@ simulation
           .attr("cy", function(d){ return d.y; })
     });
 }
+
+function legend(){
+//legend
+svg.append("circle").attr("cx",1000).attr("cy",130).attr("r", 6).style("fill", "grey")
+svg.append("circle").attr("cx",1000).attr("cy",160).attr("r", 6).style("fill", "black")
+svg.append("circle").attr("cx",1000).attr("cy",190).attr("r", 6).style("fill", "greeen")
+svg.append("circle").attr("cx",1000).attr("cy",220).attr("r", 6).style("fill", "blue")
+svg.append("circle").attr("cx",1000).attr("cy",250).attr("r", 6).style("fill", "pink")
+svg.append("circle").attr("cx",1000).attr("cy",280).attr("r", 6).style("fill", "#FF0000")
+svg.append("circle").attr("cx",1000).attr("cy",310).attr("r", 6).style("fill", "yellow")
+svg.append("circle").attr("cx",1000).attr("cy",340).attr("r", 6).style("fill", "white").style("stroke", "black")
+svg.append("text").attr("x", 1020).attr("y", 130).text("folklore").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 1020).attr("y", 160).text("Reputation").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 1020).attr("y", 190).text("evermore").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 1020).attr("y", 220).text("1989").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 1020).attr("y", 250).text("Lover").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 1020).attr("y", 280).text("Red").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 1020).attr("y", 310).text("Fearless").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 1020).attr("y", 340).text("Other").style("font-size", "15px").attr("alignment-baseline","middle")
+}  
 
 //filter
 d3.select('#filter-us-only').on('change', function() {
