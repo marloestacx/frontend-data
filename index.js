@@ -5,7 +5,7 @@ let count = 0;
 // set the dimensions and margins of the graph
 const margin = {top: 0, bottom: 10, left: 0, right: 800};
 const width = 1600 - margin.left - margin.right;
-const height = 800 - margin.top - margin.bottom;
+const height = 900 - margin.top - margin.bottom;
 
 // Define the div for the tooltip
 var div = d3.select("body").append("div")	
@@ -49,6 +49,8 @@ function getAlbums(data){
 				"x-rapidapi-key": "0825494c1bmsh1828917831cd0c7p18e3e7jsn3a9c6a86182c"
 			}
 		}).then((json) => {
+      //replace zero width space
+      json.response.song.title = json.response.song.title.replace(/\u200B/g,'');
       //add name, artist, album and views in array
       songData.push({
         "name": json.response.song.title,
@@ -56,19 +58,16 @@ function getAlbums(data){
         "album": json.response.song.album.name,
         "views": json.response.song.stats.pageviews
       })  
-
           if(count == array.length - 1){
             circlePack(songData);
           }
           count++
 		})
 	})  
-
 }
 
 function circlePack(songData)
 {
-
 // Add a scale for bubble size
 const sqrtScale = d3.scaleSqrt()
 .domain(d3.extent(songData, d => d.views))
@@ -120,7 +119,7 @@ var node = circle.enter()
       div.transition()		
           .duration(200)		
           .style("opacity", .9);		
-      div	.html(d.target.__data__.name)	
+      div.html(d.target.__data__.name)	
           .style("left", (d.pageX) + "px")		
           .style("top", (d.pageY - 28) + "px");	
       })					
@@ -159,31 +158,31 @@ simulation
 
 function legend(){
 //legend
-svg.append("circle").attr("cx",1000).attr("cy",130).attr("r", 6).style("fill", "grey")
-svg.append("circle").attr("cx",1000).attr("cy",160).attr("r", 6).style("fill", "black")
-svg.append("circle").attr("cx",1000).attr("cy",190).attr("r", 6).style("fill", "greeen")
-svg.append("circle").attr("cx",1000).attr("cy",220).attr("r", 6).style("fill", "blue")
-svg.append("circle").attr("cx",1000).attr("cy",250).attr("r", 6).style("fill", "pink")
-svg.append("circle").attr("cx",1000).attr("cy",280).attr("r", 6).style("fill", "#FF0000")
-svg.append("circle").attr("cx",1000).attr("cy",310).attr("r", 6).style("fill", "yellow")
-svg.append("circle").attr("cx",1000).attr("cy",340).attr("r", 6).style("fill", "white").style("stroke", "black")
-svg.append("text").attr("x", 1020).attr("y", 130).text("folklore").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 1020).attr("y", 160).text("Reputation").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 1020).attr("y", 190).text("evermore").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 1020).attr("y", 220).text("1989").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 1020).attr("y", 250).text("Lover").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 1020).attr("y", 280).text("Red").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 1020).attr("y", 310).text("Fearless").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 1020).attr("y", 340).text("Other").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("circle").attr("cx",900).attr("cy",130).attr("r", 6).style("fill", "grey")
+svg.append("circle").attr("cx",900).attr("cy",160).attr("r", 6).style("fill", "black")
+svg.append("circle").attr("cx",900).attr("cy",190).attr("r", 6).style("fill", "greeen")
+svg.append("circle").attr("cx",900).attr("cy",220).attr("r", 6).style("fill", "blue")
+svg.append("circle").attr("cx",900).attr("cy",250).attr("r", 6).style("fill", "pink")
+svg.append("circle").attr("cx",900).attr("cy",280).attr("r", 6).style("fill", "#FF0000")
+svg.append("circle").attr("cx",900).attr("cy",310).attr("r", 6).style("fill", "yellow")
+svg.append("circle").attr("cx",900).attr("cy",340).attr("r", 6).style("fill", "white").style("stroke", "black")
+svg.append("text").attr("x", 920).attr("y", 130).text("folklore").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 920).attr("y", 160).text("Reputation").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 920).attr("y", 190).text("evermore").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 920).attr("y", 220).text("1989").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 920).attr("y", 250).text("Lover").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 920).attr("y", 280).text("Red").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 920).attr("y", 310).text("Fearless").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 920).attr("y", 340).text("Other").style("font-size", "15px").attr("alignment-baseline","middle")
 }  
 
 //filter
-d3.select('#filter-us-only').on('change', function() {
+d3.select('#filter').on('change', function() {
   // This will be triggered when the user selects or unselects the checkbox
   const checked = d3.select(this).property('checked');
   if (checked === true) {
     // Checkbox was just checked
-    // Keep only data element whose country is US
+    // Keep only data with artist Taylor Swift
     const filtered_data = songData.filter((d) => d.artist === 'Taylor Swift');
     circlePack(filtered_data);  // Update the chart with the filtered data
   } else {
