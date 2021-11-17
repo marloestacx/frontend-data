@@ -3,10 +3,7 @@ let songData = [];
 let count = 0;
 
 // set the dimensions and margins of the graph
-// var width = 800
-// var height = 800
-
-const margin = {top: 40, bottom: 10, left: 120, right: 20};
+const margin = {top: 40, bottom: 10, left: 0, right: 20};
 const width = 1600 - margin.left - margin.right;
 const height = 800 - margin.top - margin.bottom;
 
@@ -15,19 +12,7 @@ var div = d3.select("body").append("div")
 .attr("class", "tooltip")				
 .style("opacity", 0);
 
-// append the svg object to the body of the page
-// var svg = d3.select("#my_dataviz")
-//   .append("svg")
-//     .attr("width", 800)
-//     .attr("height", 800)
-
-
-const svg = d3.select('body').append('svg')
-.attr('width', width+margin.left+margin.right)
-.attr('height', height+margin.top+margin.bottom);
-
-//&per_page=50
-//get 20 populair songs from artist
+//get 50 populair songs from artist
 function getData(){
 d3.json("https://genius.p.rapidapi.com/artists/1177/songs?sort=popularity&per_page=50", {
 	"method": "GET",
@@ -53,8 +38,7 @@ function getAlbums(data){
 				"x-rapidapi-key": "0825494c1bmsh1828917831cd0c7p18e3e7jsn3a9c6a86182c"
 			}
 		}).then((json) => {
-      //add name, album and views in array
-      // console.log(json.response.song.stats.pageviews)
+      //add name, artist, album and views in array
       songData.push({
         "name": json.response.song.title,
         "artist": json.response.song.artist_names,
@@ -71,26 +55,31 @@ function getAlbums(data){
 
 }
 
+// Creates sources <svg> element
+const svg = d3.select('#my_dataviz').append('svg')
+.attr('width', width+margin.left+margin.right)
+.attr('height', height+margin.top+margin.bottom);
+
+
+// Group used to enforce margin
+const g = svg.append('g')
+.attr('transform', `translate(${margin.left},${margin.top})`);
+
+
 function circlePack(songData)
 {
-// const linearScale = d3.scaleSqrt()
-// .domain(d3.extent(songData, d => d.views))
-// .range([0, 100])
 
-// // Add a scale for bubble size
-// const sqrtScale = d3.scaleSqrt()
-// 	.domain(d3.extent(songData, d => d.views))
-// 	.range([0, 80]);
-console.log(songData)
-const circle = svg.selectAll('circle').data(songData);
+// Add a scale for bubble size
+const sqrtScale = d3.scaleSqrt()
+.domain(d3.extent(songData, d => d.views))
+.range([10, 100])
+
+const circle = g.selectAll('circle').data(songData, function(d) { return d.name; });
 
 // Initialize the circle: all located at the center of the svg area
 var node = circle.enter()
 .append("circle")
-    // .attr("r", 25)
-    // .attr("cx", width / 2)
-    // .attr("cy", height / 2)
-    .attr("r", function(d){ return linearScale(d.views)})
+    .attr("r", function(d){ return sqrtScale(d.views)})
     .attr("cx", width / 2)
     .attr("cy", height / 2)
     //color circle according to album name
@@ -147,13 +136,14 @@ var node = circle.enter()
 
 circle.update;
 circle.exit().remove();//remove unneeded circles
- 
+
+console.log(node)
  
 // Features of the forces applied to the nodes:
 var simulation = d3.forceSimulation()
     .force("center", d3.forceCenter().x(width / 2).y(height / 2)) // Attraction to the center of the svg area
     .force("charge", d3.forceManyBody().strength(0.5)) // Nodes are attracted one each other of value is > 0
-    .force("collide", d3.forceCollide().strength(.2).radius(function(d){ return (linearScale(d.views)+3) }).iterations(1)) // Force that avoids circle overlapping
+    .force("collide", d3.forceCollide().strength(.2).radius(function(d){ return (sqrtScale(d.views)+3) }).iterations(1)) // Force that avoids circle overlapping
   
 
 // Apply these forces to the nodes and update their positions.
@@ -174,7 +164,6 @@ d3.select('#filter-us-only').on('change', function() {
   if (checked === true) {
     // Checkbox was just checked
     // Keep only data element whose country is US
-    // console.log(songData)
     const filtered_data = songData.filter((d) => d.artist === 'Taylor Swift');
     circlePack(filtered_data);  // Update the chart with the filtered data
   } else {
