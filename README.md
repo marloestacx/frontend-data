@@ -1,8 +1,8 @@
 # frontend-data
 
-##Concept
+## Concept
 
-##Installeren
+## Installeren
 
 Clone deze repository
 ```
