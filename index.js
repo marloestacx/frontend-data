@@ -3,7 +3,7 @@ let songData = [];
 let count = 0;
 
 // set the dimensions and margins of the graph
-const margin = {top: 0, bottom: 10, left: 0, right: 200};
+const margin = {top: 0, bottom: 10, left: 0, right: 0};
 const width = 1500 - margin.left - margin.right;
 const height = 900 - margin.top - margin.bottom;
 
@@ -135,7 +135,6 @@ circle.update;
 //Remove unneeded circles
 circle.exit().remove();
 
- 
 // Features of the forces applied to the nodes:
 var simulation = d3.forceSimulation()
 // Attraction to the center of the svg area
@@ -155,25 +154,81 @@ simulation
 }
 
 function legend(){
-//legend
-svg.append("text").attr("x", 10).attr("y", 100).text("Album").style("font-size", "19px").attr("alignment-baseline","middle")
-svg.append("circle").attr("cx",10).attr("cy",130).attr("r", 6).style("fill", "grey")
-svg.append("circle").attr("cx",10).attr("cy",160).attr("r", 6).style("fill", "black")
-svg.append("circle").attr("cx",10).attr("cy",190).attr("r", 6).style("fill", "green")
-svg.append("circle").attr("cx",10).attr("cy",220).attr("r", 6).style("fill", "blue")
-svg.append("circle").attr("cx",10).attr("cy",250).attr("r", 6).style("fill", "pink")
-svg.append("circle").attr("cx",10).attr("cy",280).attr("r", 6).style("fill", "#FF0000")
-svg.append("circle").attr("cx",10).attr("cy",310).attr("r", 6).style("fill", "yellow")
-svg.append("circle").attr("cx",10).attr("cy",340).attr("r", 6).style("fill", "white").style("stroke", "black")
-svg.append("text").attr("x", 30).attr("y", 130).text("folklore").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 30).attr("y", 160).text("Reputation").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 30).attr("y", 190).text("evermore").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 30).attr("y", 220).text("1989").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 30).attr("y", 250).text("Lover").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 30).attr("y", 280).text("Red").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 30).attr("y", 310).text("Fearless").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 30).attr("y", 340).text("Other").style("font-size", "15px").attr("alignment-baseline","middle")
+//Legend
+//Albums
+svg.append("text").attr("x", 10).attr("y", 40).text("Album").style("font-size", "19px").attr("alignment-baseline","middle")
+svg.append("circle").attr("cx",10).attr("cy",70).attr("r", 6).style("fill", "grey")
+svg.append("circle").attr("cx",10).attr("cy",100).attr("r", 6).style("fill", "black")
+svg.append("circle").attr("cx",10).attr("cy",130).attr("r", 6).style("fill", "green")
+svg.append("circle").attr("cx",10).attr("cy",160).attr("r", 6).style("fill", "blue")
+svg.append("circle").attr("cx",10).attr("cy",190).attr("r", 6).style("fill", "pink")
+svg.append("circle").attr("cx",10).attr("cy",220).attr("r", 6).style("fill", "#FF0000")
+svg.append("circle").attr("cx",10).attr("cy",250).attr("r", 6).style("fill", "yellow")
+svg.append("circle").attr("cx",10).attr("cy",280).attr("r", 6).style("fill", "white").style("stroke", "black")
+svg.append("text").attr("x", 30).attr("y", 70).text("folklore").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 30).attr("y", 100).text("Reputation").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 30).attr("y", 130).text("evermore").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 30).attr("y", 160).text("1989").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 30).attr("y", 190).text("Lover").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 30).attr("y", 220).text("Red").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 30).attr("y", 250).text("Fearless").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 30).attr("y", 280).text("Other").style("font-size", "15px").attr("alignment-baseline","middle")
+
+
+//Populairity
+svg.append("text").attr("x", 10).attr("y", 330).text("Popularity").style("font-size", "19px").attr("alignment-baseline","middle")
+
+// The scale you use for bubble size
+var size = d3.scaleSqrt()
+  .domain([1, 100])
+  .range([1, 100]) 
+
+// Add legend: circles
+var valuesToShow = [{name: 'Least popular', number: 10}, {name: 'Average', number: 50},{name: 'Most popular', number: 100}]
+var xCircle = 110
+var xLabel = 250
+var yCircle = 550
+
+svg
+  .selectAll("legend")
+  .data(valuesToShow)
+  .enter()
+  .append("circle")
+    .attr("cx", xCircle)
+    .attr("cy", function(d){ return yCircle - size(d.number) } )
+    .attr("r", function(d){ return size(d.number) })
+    .style("fill", "none")
+    .attr("stroke", "black")
+
+    console.log(songData)
+
+// Add legend: segments
+svg
+.selectAll("legend")
+.data(valuesToShow)
+.enter()
+.append("line")
+  .attr('x1', function(d){ return xCircle + size(d.number) } )
+  .attr('x2', xLabel)
+  .attr('y1', function(d){ return yCircle - size(d.number) } )
+  .attr('y2', function(d){ return yCircle - size(d.number) } )
+  .attr('stroke', 'black')
+  .style('stroke-dasharray', ('2,2'))
+
+// Add legend: labels
+svg
+.selectAll("legend")
+.data(valuesToShow)
+.enter()
+.append("text")
+  .attr('x', xLabel)
+  .attr('y', function(d){ return yCircle - size(d.number)} )
+  .text( function(d){ return d.name } )
+  .style("font-size", 15)
+  .attr('alignment-baseline', 'middle')
 }  
+
+
 
 //filter
 d3.select('#filter').on('change', function() {
