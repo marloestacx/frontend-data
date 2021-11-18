@@ -9,3 +9,8 @@ Clone deze repository
 ```
 git clone https://github.com/marloestacx/frontend-data.git
 ```
+
+## License
+
+<a href="https://github.com/marloestacx/functional-programming/blob/main/LICENSE"> MIT license </a>
+
